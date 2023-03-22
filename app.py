@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 import GoogleAcademyService
 import DBHelper
 import BaseMapper
+import Service
 
 app = Flask(__name__)
 
@@ -74,6 +75,18 @@ def filterAuthorsBy(filterKey=None):
     if authorsList:
         return json.dumps(authorsList)
     return json.dumps({"message": f"Неправильный фильтр : {filterKey}"})
+
+
+@app.route('/api/authors/sum')
+def hIndexSum():
+    authors = BaseMapper.convertToAuthorsJson(DBHelper.select_all_authors())
+    return json.dumps(Service.sumAllIndex(authors))
+
+
+@app.route('/api/createAuthor', methods=['POST'])
+def createNewAuthor():
+    data = json.loads(request.data)
+    # TODO create save logic
 
 
 if __name__ == '__main__':
